@@ -61,11 +61,12 @@ export async function callTextLLMForJson<T>(opts: {
   schemaHint?: string;
   parse: (value: unknown) => T;
   images?: string[];
+  fallbackModel?: string;
 }): Promise<T> {
-  const { model, prompt, label, schemaHint, parse, images } = opts;
+  const { model, prompt, label, schemaHint, parse, images, fallbackModel } = opts;
 
   async function attempt(): Promise<T> {
-    const raw = await callTextLLM({ model, prompt, images });
+    const raw = await callTextLLM({ model, prompt, images, fallbackModel });
     try {
       return parse(extractJson<unknown>(raw));
     } catch (error) {
@@ -79,6 +80,7 @@ export async function callTextLLMForJson<T>(opts: {
           schemaHint,
         }),
         images,
+        fallbackModel,
       });
       return parse(extractJson<unknown>(repairedRaw));
     }

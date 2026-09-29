@@ -17,21 +17,12 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import {
-  Loader2,
-  RotateCcw,
-  RefreshCw,
-  Upload,
-  Sparkles,
-  ImageIcon,
-  Download,
-  Info,
-} from "lucide-react";
+import { Loader2, RotateCcw, Sparkles, ImageIcon, Download, Info } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useProjectStore, useActiveContent } from "@/store/useProjectStore";
 import { useSettingsStore } from "@/store/useSettingsStore";
-import { callImageLLM } from "@/lib/llm-client";
+import { callImageLLM, callTextLLM } from "@/lib/llm-client";
 import { callTextLLMForJson } from "@/lib/llm-json";
 import { validateAnalysisJson } from "@/lib/analysis-render";
 import {
@@ -40,10 +31,11 @@ import {
   resolveDesignProfile,
 } from "@/lib/prompt-injection";
 import simpleBriefPromptRaw from "@/data/prompts/simple/design-brief-short.txt?raw";
+import lessonPlanPromptRaw from "@/data/prompts/simple/lesson-plan-preprocess.txt?raw";
 import imagePromptHeaderText from "@/data/prompts/image-prompt-header.txt?raw";
 import executionRulesText from "@/data/prompts/execution-rules.txt?raw";
+import { homeTextFallbackModel } from "@/lib/models";
 import type { ContentSummary, DesignBriefResult, InfographicStyle } from "@/lib/types";
-import { ProfileSelect } from "@/components/design-profile/ProfileSelect";
 import { SimpleImageRating } from "@/components/workspace/SimpleImageRating";
 import { ImageVersionDeleteButton } from "@/components/workspace/ImageVersionDeleteButton";
 import { cn } from "@/lib/utils";
@@ -55,10 +47,6 @@ import {
   tryNotifyStorageQuotaExceeded,
   type StorageQuotaContext,
 } from "@/lib/browser-storage-quota";
-import {
-  importSourceFiles,
-  SOURCE_FILE_ACCEPT,
-} from "@/lib/source-file-import";
 import { buildSourceTextForPrompt, hasSourceMaterials } from "@/lib/source-material";
 import { archiveImageToGoogle, flushAllPendingArchiveFeedback, flushPendingArchiveFeedback } from "@/lib/archive-client";
 import { DEFAULT_HOME_DESIGN_PROFILE } from "@/lib/design-profile-defaults";
@@ -73,11 +61,8 @@ import {
   trackHomeImageFullscreen,
   trackHomeImageRate,
   trackHomeImageSuccess,
-  trackHomeRegenImageClick,
-  trackHomeRegenImageSuccess,
   trackHomeResetClick,
   trackHomeResetConfirm,
-  trackHomeVersionSwitch,
 } from "@/lib/analytics/home-events";
 
 export const Route = createFileRoute("/")({
@@ -121,15 +106,6 @@ function RequiredStar() {
   );
 }
 
-function fileToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const r = new FileReader();
-    r.onload = () => resolve(String(r.result));
-    r.onerror = () => reject(r.error);
-    r.readAsDataURL(file);
-  });
-}
-
 function SimpleHomePageTitle({ className }: { className?: string }) {
   return (
     <h1 className={cn("text-4xl font-semibold tracking-tight", className)}>
@@ -147,24 +123,18 @@ function SimpleHome() {
   const selectedStyleId = useProjectStore((s) => s.selectedStyleId);
   const selectedProfileName = useProjectStore((s) => s.selectedProfileName);
   const setSelectedProfileName = useProjectStore((s) => s.setSelectedProfileName);
-  const userWishes = useProjectStore((s) => s.userWishes);
-  const setUserWishes = useProjectStore((s) => s.setUserWishes);
   const attachedImages = useProjectStore((s) => s.attachedImages);
-  const addAttachedImages = useProjectStore((s) => s.addAttachedImages);
   const uploadedSourceText = useProjectStore((s) => s.uploadedSourceText);
-  const setUploadedSourceText = useProjectStore((s) => s.setUploadedSourceText);
   const simpleCurrent = useProjectStore((s) => s.simpleCurrentImage);
   const simpleVersions = useProjectStore((s) => s.simpleImageVersions);
   const setSimpleCurrent = useProjectStore((s) => s.setSimpleCurrentImage);
   const archiveSimple = useProjectStore((s) => s.archiveSimpleCurrentImage);
-  const swapSimpleVersion = useProjectStore((s) => s.swapSimpleVersion);
   const deleteSimpleImage = useProjectStore((s) => s.deleteSimpleImage);
   const clearSimpleImages = useProjectStore((s) => s.clearSimpleImages);
 
   const activeContent = useActiveContent();
   const prompts = useSettingsStore((s) => s.prompts);
   const allStyles = useSettingsStore((s) => s.styles);
-  const profiles = useSettingsStore((s) => s.profiles);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const trackHome = isHomeAnalyticsRoute(pathname);
   const formInputStartedRef = useRef(false);
@@ -175,17 +145,14 @@ function SimpleHome() {
     trackHomeFormInputStart(pathname, inputName);
   }
 
-  const [loading, setLoading] = useState<null | "analyze" | "image">(null);
+  const [loading, setLoading] = useState<null | "lessonPlan" | "analyze" | "image">(null);
   const [imageStage, setImageStage] = useState<null | "brief" | "render">(null);
   const [resetOpen, setResetOpen] = useState(false);
-  const [regenImageOpen, setRegenImageOpen] = useState(false);
   const [imageFullscreen, setImageFullscreen] = useState(false);
   const [deleteImageId, setDeleteImageId] = useState<string | null>(null);
   const [storageQuotaWarningOpen, setStorageQuotaWarningOpen] = useState(false);
   const [storageQuotaWarningContext, setStorageQuotaWarningContext] =
     useState<StorageQuotaContext>("save-image");
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const enabledStyles = useMemo<InfographicStyle[]>(() => {
     const enabled = allStyles.filter((s) => s.enabled);
@@ -198,12 +165,7 @@ function SimpleHome() {
     [enabledStyles, selectedStyleId, activeContent],
   );
 
-  const activeProfile = useMemo(
-    () => profiles.find((p) => p.profileName === selectedProfileName) ?? profiles[0],
-    [profiles, selectedProfileName],
-  );
-
-  const hasSource = hasSourceMaterials(source.text, uploadedSourceText, attachedImages);
+  const hasSource = hasSourceMaterials("", uploadedSourceText, attachedImages);
   const useTopicOnlyPrompt = !hasSource;
   const subjectOk = Boolean(source.subject);
   const gradeOk = Boolean(source.grade);
@@ -253,19 +215,6 @@ function SimpleHome() {
     }
   }
 
-  async function ensureStorageForRegen(): Promise<boolean> {
-    await refreshStorageQuotaWarningState();
-    const ok = await hasEnoughStorageForNewImage();
-    if (!ok) tryNotifyStorageQuotaExceeded("regen");
-    return ok;
-  }
-
-  async function openImageGenerationDialog() {
-    if (!(await ensureStorageForRegen())) return;
-    if (trackHome) trackHomeRegenImageClick(pathname);
-    setRegenImageOpen(true);
-  }
-
   function confirmDeleteImage(saveFirst: boolean) {
     if (!deleteImageTarget) return;
     if (saveFirst) downloadSimpleImageEntry(deleteImageTarget);
@@ -274,45 +223,23 @@ function SimpleHome() {
     void refreshStorageQuotaWarningState();
   }
 
-  async function attachImageFiles(files: File[]) {
-    if (!files.length) return;
-    try {
-      const dataUrls = await Promise.all(files.map(fileToDataUrl));
-      addAttachedImages(dataUrls);
-    } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : "Не удалось прикрепить картинку");
-    }
-  }
-
-  async function onPasteCapture(e: React.ClipboardEvent<HTMLTextAreaElement>) {
-    const items = Array.from(e.clipboardData?.items ?? []);
-    const imageFiles = items
-      .filter((it) => it.kind === "file" && it.type.startsWith("image/"))
-      .map((it) => it.getAsFile())
-      .filter((f): f is File => !!f);
-    if (imageFiles.length) {
-      e.preventDefault();
-      touchFormInput("paste_image");
-      await attachImageFiles(imageFiles);
-    }
-  }
-
-  async function onFileChosen(files: FileList | null) {
-    if (!files?.length) return;
-    touchFormInput("attach_file");
-    await importSourceFiles(Array.from(files), {
-      getUploadedText: () => uploadedSourceText,
-      setUploadedText: setUploadedSourceText,
-      addImages: addAttachedImages,
-      onSuccess: (message) => toast.success(message),
-      onError: (message) => toast.error(message),
+  async function runLessonPlanStep(lessonPlan: string): Promise<string> {
+    const trimmed = lessonPlan.trim();
+    if (!trimmed) return "";
+    const prompt = lessonPlanPromptRaw.replaceAll("{{LESSON_PLAN}}", trimmed);
+    const model = useProjectStore.getState().models.analysis;
+    const text = await callTextLLM({
+      model,
+      prompt,
+      fallbackModel: homeTextFallbackModel(model),
     });
+    return text.trim();
   }
 
-  async function runAnalyze(): Promise<ContentSummary | null> {
+  async function runAnalyze(step0Appendix: string): Promise<ContentSummary | null> {
     const stylesList = enabledStyles.map((s) => `- ${s.id}: ${s.name} — ${s.shortDescription}`).join("\n");
     const template = useTopicOnlyPrompt ? prompts.analysisTopicOnly : prompts.analysisWithContent;
-    const merged = (source.userInstructions || "").trim();
+    const merged = [source.userInstructions.trim(), step0Appendix.trim()].filter(Boolean).join("\n\n");
     const filled = template
       .replaceAll("{{USER_INSTRUCTIONS}}", merged || "(нет)")
       .replaceAll("{{STYLES_LIST}}", stylesList || "(стилей не задано)")
@@ -330,6 +257,7 @@ function SimpleHome() {
       label: "analysis",
       parse: validateAnalysisJson,
       images: imgs,
+      fallbackModel: homeTextFallbackModel(models.analysis),
     });
     const fallbackStyle = enabledStyles[0]?.id ?? BENTO_STYLE_ID;
     const summary: ContentSummary = {
@@ -372,6 +300,7 @@ function SimpleHome() {
       prompt: filled,
       label: "simple design brief",
       parse: (v) => v as DesignBriefResult,
+      fallbackModel: homeTextFallbackModel(project.models.brief),
     });
     if (!briefRes?.PromptForImageGeneration) throw new Error("Инструкции для генерации инфографики не готовы");
 
@@ -463,9 +392,14 @@ function SimpleHome() {
       });
     }
     try {
+      let step0Appendix = "";
+      if (source.text.trim()) {
+        setLoading("lessonPlan");
+        step0Appendix = await runLessonPlanStep(source.text);
+      }
       setLoading("analyze");
       const profileBeforeAnalyze = useProjectStore.getState().selectedProfileName;
-      const summary = await runAnalyze();
+      const summary = await runAnalyze(step0Appendix);
       if (!summary) return;
       if (trackHome) {
         trackHomeContentSuccess(pathname, {
@@ -497,37 +431,6 @@ function SimpleHome() {
     }
   }
 
-  async function onRegenImage(profileName: string | null, wishes: string) {
-    try {
-      setRegenImageOpen(false);
-      if (profileName) setSelectedProfileName(profileName);
-      setUserWishes(wishes);
-      setLoading("image");
-      const imageOk = await runImage({ useProfileName: profileName, genTrigger: "regen_image" });
-      if (!imageOk) return;
-      if (trackHome) {
-        const img = useProjectStore.getState().simpleCurrentImage;
-        trackHomeRegenImageSuccess(pathname, {
-          version_number: img?.versionNumber ?? 1,
-          profile_name: profileName ?? selectedProfileName ?? "",
-          has_wishes: Boolean(wishes.trim()),
-        });
-        trackHomeImageSuccess(pathname, {
-          version_number: img?.versionNumber ?? 1,
-          image_versions_count: useProjectStore.getState().simpleImageVersions.length,
-          profile_name: profileName ?? selectedProfileName ?? "",
-          trigger: "regen_image",
-        });
-      }
-      toast.success("Инфографика готова");
-    } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : "Не удалось перегенерировать");
-    } finally {
-      setLoading(null);
-      setImageStage(null);
-    }
-  }
-
   function onConfirmReset() {
     if (trackHome) trackHomeResetConfirm(pathname);
     formInputStartedRef.current = false;
@@ -538,40 +441,24 @@ function SimpleHome() {
     toast.success("Проект сброшен");
   }
 
-  const sidebarVersions = useMemo(
-    () =>
-      [...simpleVersions].sort(
-        (a, b) =>
-          (a.versionNumber ?? Number.MAX_SAFE_INTEGER) - (b.versionNumber ?? Number.MAX_SAFE_INTEGER) ||
-          a.createdAt - b.createdAt,
-      ),
-    [simpleVersions],
-  );
-  const currentVerLabel = simpleCurrent
-    ? `ver.${simpleCurrent.versionNumber ?? sidebarVersions.length + 1}`
-    : "ver.1";
+  const formPanel = (
+    <section className="space-y-5 rounded-lg border border-border bg-card p-5">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-semibold">Данные инфографики</h2>
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={isBusy}
+          onClick={() => {
+            if (trackHome) trackHomeResetClick(pathname);
+            setResetOpen(true);
+          }}
+        >
+          <RotateCcw className="size-3.5 mr-1" /> Начать заново
+        </Button>
+      </div>
 
-  if (!showResults) {
-    return (
-      <div className="mx-auto min-h-0 w-full max-w-3xl flex-1 overflow-y-auto px-4 pt-8 pb-6">
-        <HomeYandexMetrika />
-        <SimpleHomePageTitle className="mb-6" />
-        <section className="rounded-lg border border-border bg-card p-5 space-y-5">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold">Данные инфографики</h2>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                if (trackHome) trackHomeResetClick(pathname);
-                setResetOpen(true);
-              }}
-            >
-              <RotateCcw className="size-3.5 mr-1" /> Начать заново
-            </Button>
-          </div>
-
-          <div className="grid grid-cols-12 gap-3">
+      <div className="grid grid-cols-12 gap-3">
             <div className="col-span-6">
               <Label className="text-xs">
                 Предмет
@@ -633,228 +520,121 @@ function SimpleHome() {
             </div>
           </div>
 
-          <div>
-            <Label className="text-xs">Дополнительные инструкции</Label>
-            <Textarea
-              rows={2}
-              value={source.userInstructions}
-              onChange={(e) => {
-                touchFormInput("user_instructions");
-                setSource({ userInstructions: e.target.value });
-              }}
-              placeholder="На чём сделать акцент, что пропустить, особенности аудитории…"
-            />
-          </div>
-
-          <TooltipProvider delayDuration={150}>
-            <div className="flex flex-wrap items-center gap-6">
-              <div className="flex items-center gap-2">
-                <Switch
-                  id="sw-edu"
-                  checked={source.educationalIllustrations}
-                  onCheckedChange={(v) => {
-                    touchFormInput("educational_illustrations");
-                    setSource({ educationalIllustrations: v });
-                  }}
-                />
-                <Label htmlFor="sw-edu" className="text-sm font-normal cursor-pointer">
-                  Учебные иллюстрации
-                </Label>
-                {source.educationalIllustrations && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="size-3.5 text-muted-foreground cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent className="max-w-xs text-xs">
-                      Иллюстрации по предмету — только если необходимы.
-                    </TooltipContent>
-                  </Tooltip>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                <Switch
-                  id="sw-narr"
-                  checked={source.narrativeIllustrations}
-                  onCheckedChange={(v) => {
-                    touchFormInput("narrative_illustrations");
-                    setSource({ narrativeIllustrations: v });
-                  }}
-                />
-                <Label htmlFor="sw-narr" className="text-sm font-normal cursor-pointer">
-                  Сюжетные иллюстрации
-                </Label>
-              </div>
-            </div>
-          </TooltipProvider>
-
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label className="text-xs">Исходный материал (необязательно)</Label>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={() => {
-                  touchFormInput("attach_file");
-                  fileInputRef.current?.click();
-                }}
-              >
-                <Upload className="size-3.5 mr-1" /> Файл
-              </Button>
-            </div>
-            <Textarea
-              rows={6}
-              placeholder="Вставьте текст или изображение (Ctrl/Cmd + V)"
-              value={source.text}
-              onChange={(e) => {
-                touchFormInput("source_text");
-                setSource({ text: e.target.value });
-              }}
-              onPaste={onPasteCapture}
-            />
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept={SOURCE_FILE_ACCEPT}
-              multiple
-              className="hidden"
-              onChange={(e) => {
-                void onFileChosen(e.target.files);
-                e.target.value = "";
-              }}
-            />
-          </div>
-
-          <Button onClick={onGenerateAll} disabled={!canGenerate} className="w-full">
-            <Sparkles className="size-4 mr-2" />
-            Сгенерировать инфографику
-          </Button>
-        </section>
-
-        <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Вы уверены?</AlertDialogTitle>
-              <AlertDialogDescription>Форма ввода данных будет очищена</AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Отменить</AlertDialogCancel>
-              <AlertDialogAction onClick={onConfirmReset}>Начать заново</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+      <div>
+        <Label className="text-xs">Дополнительные пожелания</Label>
+        <Textarea
+          rows={2}
+          value={source.userInstructions}
+          onChange={(e) => {
+            touchFormInput("user_instructions");
+            setSource({ userInstructions: e.target.value });
+          }}
+          placeholder="На чём сделать акцент, что пропустить, особенности аудитории…"
+        />
       </div>
-    );
-  }
+
+      <TooltipProvider delayDuration={150}>
+        <div className="flex flex-wrap items-center gap-6">
+          <div className="flex items-center gap-2">
+            <Switch
+              id="sw-edu"
+              checked={source.educationalIllustrations}
+              onCheckedChange={(v) => {
+                touchFormInput("educational_illustrations");
+                setSource({ educationalIllustrations: v });
+              }}
+            />
+            <Label htmlFor="sw-edu" className="text-sm font-normal cursor-pointer">
+              Учебные иллюстрации
+            </Label>
+            {source.educationalIllustrations && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="size-3.5 text-muted-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs text-xs">
+                  Иллюстрации по предмету — только если необходимы.
+                </TooltipContent>
+              </Tooltip>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <Switch
+              id="sw-narr"
+              checked={source.narrativeIllustrations}
+              onCheckedChange={(v) => {
+                touchFormInput("narrative_illustrations");
+                setSource({ narrativeIllustrations: v });
+              }}
+            />
+            <Label htmlFor="sw-narr" className="text-sm font-normal cursor-pointer">
+              Сюжетные иллюстрации
+            </Label>
+          </div>
+        </div>
+      </TooltipProvider>
+
+      <div className="space-y-2">
+        <Label className="text-xs">План урока</Label>
+        <Textarea
+          rows={6}
+          placeholder="Вставьте текст плана урока"
+          value={source.text}
+          onChange={(e) => {
+            touchFormInput("lesson_plan");
+            setSource({ text: e.target.value });
+          }}
+        />
+      </div>
+
+      <Button onClick={onGenerateAll} disabled={!canGenerate || isBusy} className="w-full">
+        {isBusy ? <Loader2 className="size-4 mr-2 animate-spin" /> : <Sparkles className="size-4 mr-2" />}
+        Сгенерировать инфографику
+      </Button>
+    </section>
+  );
 
   return (
     <TooltipProvider delayDuration={150}>
-      <div className="mx-auto flex min-h-0 w-full max-w-4xl flex-1 flex-col overflow-hidden px-4 py-3">
+      <div
+        className={cn(
+          "mx-auto flex min-h-0 w-full flex-1 gap-4 px-4 pb-6",
+          showResults ? "max-w-7xl flex-row overflow-hidden py-3" : "max-w-3xl flex-col overflow-y-auto pt-8",
+        )}
+      >
         <HomeYandexMetrika />
-        <div className="mb-3 flex shrink-0 items-center justify-between gap-4">
-          <SimpleHomePageTitle className="text-3xl" />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              if (trackHome) trackHomeResetClick(pathname);
-              setResetOpen(true);
-            }}
-            disabled={isBusy}
-          >
-            <RotateCcw className="size-3.5 mr-1" /> Начать заново
-          </Button>
-        </div>
 
-        <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-border bg-card">
-          <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-border px-5 py-3 min-h-12">
-            <h2 className="text-sm font-semibold text-muted-foreground">Итоговая инфографика</h2>
-            {!isBusy && (
-              <div className="flex flex-wrap gap-2">
-                {simpleCurrent && (
-                  <Button size="sm" variant="outline" onClick={() => downloadSimpleImageEntry(simpleCurrent)}>
-                    <Download className="size-3.5 mr-1" /> Сохранить
-                  </Button>
-                )}
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={!activeContent}
-                  onClick={() => {
-                    void openImageGenerationDialog();
-                  }}
-                >
-                  {simpleCurrent ? (
-                    <>
-                      <RefreshCw className="size-3.5 mr-1" /> Перегенерировать
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="size-3.5 mr-1" /> Сгенерировать
-                    </>
-                  )}
+        {showResults && (
+          <section className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-lg border border-border bg-card">
+            <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-border px-5 py-3 min-h-12">
+              <h2 className="text-sm font-semibold text-muted-foreground">Итоговая инфографика</h2>
+              {!isBusy && simpleCurrent && (
+                <Button size="sm" variant="outline" onClick={() => downloadSimpleImageEntry(simpleCurrent)}>
+                  <Download className="size-3.5 mr-1" /> Сохранить
                 </Button>
-              </div>
-            )}
-          </div>
-
-          <div className="flex min-h-0 flex-1 flex-col gap-2 px-3 py-2">
-            <div className="flex min-h-0 flex-1 gap-2">
-              {simpleVersions.length > 0 && !isBusy && (
-                <aside className="flex w-[4.5rem] shrink-0 flex-col overflow-hidden rounded-md border border-border bg-muted/40">
-                  <div className="shrink-0 border-b border-border px-1 py-1.5 text-center text-[10px] leading-tight text-muted-foreground">
-                    <div className="font-medium">Версии</div>
-                    <div>{currentVerLabel}</div>
-                  </div>
-                  <div className="flex min-h-0 flex-1 flex-col gap-1.5 overflow-y-auto p-1.5">
-                    {sidebarVersions.map((v) => (
-                      <div key={v.id} className="group relative aspect-[3/4] w-full shrink-0">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (trackHome && simpleCurrent) {
-                              trackHomeVersionSwitch(pathname, {
-                                from_version: simpleCurrent.versionNumber ?? 1,
-                                to_version: v.versionNumber ?? 1,
-                              });
-                            }
-                            swapSimpleVersion(v.id);
-                          }}
-                          className="relative h-full w-full overflow-hidden rounded border hover:ring-2 hover:ring-ring"
-                          title={`Открыть ver.${v.versionNumber ?? "?"}`}
-                        >
-                          <img src={v.dataUrl} alt="" className="h-full w-full object-cover" />
-                          <span className="absolute inset-x-0 bottom-0 bg-black/60 py-0.5 text-center text-[10px] text-white">
-                            ver.{v.versionNumber ?? "?"}
-                          </span>
-                        </button>
-                        <ImageVersionDeleteButton
-                          className="absolute top-1 right-1 z-10"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setDeleteImageId(v.id);
-                          }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </aside>
               )}
+            </div>
 
+            <div className="flex min-h-0 flex-1 flex-col gap-2 px-3 py-2">
               <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-1">
-                <div className="flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-md border border-border bg-background">
-                  {loading === "analyze" ? (
+                <div className="flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-md border border-border bg-background min-h-[280px]">
+                  {loading === "lessonPlan" ? (
                     <div className="flex flex-col items-center gap-2 py-8 text-sm text-muted-foreground">
                       <Loader2 className="size-8 animate-spin" />
-                      <div>Шаг 1 из 3 — подбираем контент…</div>
+                      <div>Шаг 0 — обработка плана урока</div>
+                    </div>
+                  ) : loading === "analyze" ? (
+                    <div className="flex flex-col items-center gap-2 py-8 text-sm text-muted-foreground">
+                      <Loader2 className="size-8 animate-spin" />
+                      <div>Шаг 1 из 4 — подбираем контент…</div>
                     </div>
                   ) : loading === "image" ? (
                     <div className="flex flex-col items-center gap-2 py-8 text-sm text-muted-foreground">
                       <Loader2 className="size-8 animate-spin" />
                       <div>
                         {imageStage === "brief"
-                          ? "Шаг 2 из 3 — придумываем дизайн…"
-                          : "Шаг 3 из 3 — генерируем инфографику…"}
+                          ? "Шаг 2 из 4 — придумываем дизайн…"
+                          : "Шаг 3 из 4 — генерируем инфографику…"}
                       </div>
                     </div>
                   ) : simpleCurrent ? (
@@ -918,8 +698,19 @@ function SimpleHome() {
                 )}
               </div>
             </div>
-          </div>
         </section>
+        )}
+
+        <div
+          className={cn(
+            "min-h-0",
+            showResults ? "w-full max-w-md shrink-0 overflow-y-auto" : "w-full",
+          )}
+        >
+          {!showResults && <SimpleHomePageTitle className="mb-6" />}
+          {formPanel}
+        </div>
+      </div>
 
         {imageFullscreen && simpleCurrent && (
           <div
@@ -990,75 +781,6 @@ function SimpleHome() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-
-        <RegenerateImageDialog
-          open={regenImageOpen}
-          initialProfile={selectedProfileName ?? activeProfile?.profileName ?? ""}
-          initialWishes={userWishes}
-          onClose={() => setRegenImageOpen(false)}
-          onConfirm={onRegenImage}
-        />
-      </div>
     </TooltipProvider>
-  );
-}
-
-function RegenerateImageDialog({
-  open,
-  initialProfile,
-  initialWishes,
-  onClose,
-  onConfirm,
-}: {
-  open: boolean;
-  initialProfile: string;
-  initialWishes: string;
-  onClose: () => void;
-  onConfirm: (profileName: string | null, wishes: string) => void;
-}) {
-  const [profile, setProfile] = useState(initialProfile);
-  const [wishes, setWishes] = useState(initialWishes);
-
-  useEffect(() => {
-    if (open) {
-      setProfile(initialProfile);
-      setWishes(initialWishes);
-    }
-  }, [open, initialProfile, initialWishes]);
-
-  return (
-    <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
-      <DialogContent className="max-w-xl">
-        <DialogHeader>
-          <DialogTitle>Перегенерация инфографики</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4">
-          <p className="text-xs text-muted-foreground">
-            Новая картинка на основе уже сгенерированного контента (без изменения текста карточек).
-          </p>
-          <div className="space-y-1.5">
-            <Label className="text-xs">Цветовая палитра</Label>
-            <ProfileSelect value={profile} onChange={setProfile} allowCreate={false} />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs">Дополнительные требования к инфографике</Label>
-            <Textarea
-              rows={3}
-              value={wishes}
-              onChange={(e) => setWishes(e.target.value)}
-              placeholder="Например, написать формулы крупнее…"
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            Отмена
-          </Button>
-          <Button onClick={() => onConfirm(profile || null, wishes)}>
-            <RefreshCw className="size-3.5 mr-1" /> Перегенерировать
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
   );
 }

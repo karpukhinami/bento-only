@@ -48,11 +48,11 @@ function recordRaw(
   useUsageStore.getState().addRaw({ model, kind, at: Date.now(), raw: pretty, note });
 }
 
-export async function callTextLLM(opts: {
+async function callTextLLMOnce(opts: {
   model: string;
   prompt: string;
   system?: string;
-  images?: string[]; // data URLs or https URLs
+  images?: string[];
 }): Promise<string> {
   const res = await fetch("/api/llm", {
     method: "POST",
@@ -79,6 +79,27 @@ export async function callTextLLM(opts: {
   }
   recordUsage(data.model ?? opts.model, data.usage, "text");
   return data.text;
+}
+
+export async function callTextLLM(opts: {
+  model: string;
+  prompt: string;
+  system?: string;
+  images?: string[]; // data URLs or https URLs
+  /** On failure, one retry with this model (e.g. 2.5 Flash after 3.1 Lite). */
+  fallbackModel?: string;
+}): Promise<string> {
+  const { fallbackModel, ...primaryOpts } = opts;
+  try {
+    return await callTextLLMOnce(primaryOpts);
+  } catch (primaryError) {
+    if (!fallbackModel || fallbackModel === opts.model) throw primaryError;
+    try {
+      return await callTextLLMOnce({ ...primaryOpts, model: fallbackModel });
+    } catch {
+      throw primaryError;
+    }
+  }
 }
 
 export async function callImageLLM(opts: {

@@ -39,10 +39,23 @@ export const IMAGE_MODELS: ModelOption[] = or.image.map((m) => ({
   kind: "image" as const,
 }));
 
-/** Default text model — OpenRouter Gemini 2.5 Flash. */
-export const DEFAULT_TEXT_MODEL = OR_PREFIX + "google/gemini-2.5-flash";
+/** Default text model for steps 0–2 — OpenRouter Gemini 3.1 Flash Lite. */
+export const DEFAULT_TEXT_MODEL = OR_PREFIX + "google/gemini-3.1-flash-lite";
+/** Fallback text model when 3.1 Flash Lite is unavailable. */
+export const FALLBACK_TEXT_MODEL = OR_PREFIX + "google/gemini-2.5-flash";
 /** Default image model — OpenRouter Gemini 3.1 Flash Image Preview. */
 export const DEFAULT_IMAGE_MODEL = OR_PREFIX + "google/gemini-3.1-flash-image-preview";
+
+const PRIMARY_TEXT_UPSTREAM = "google/gemini-3.1-flash-lite";
+
+/** Retry with 2.5 Flash when the home pipeline uses the primary text model. */
+export function homeTextFallbackModel(model: string): string | undefined {
+  const upstream = resolveUpstreamModelId(model);
+  if (model === DEFAULT_TEXT_MODEL || upstream === PRIMARY_TEXT_UPSTREAM) {
+    return FALLBACK_TEXT_MODEL;
+  }
+  return undefined;
+}
 
 /** True when the UI value resolves to OpenRouter. */
 export function isOpenRouterModel(id: string): boolean {

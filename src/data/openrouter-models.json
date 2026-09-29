@@ -1,6 +1,7 @@
 {
   "text": [
     { "id": "google/gemini-2.5-flash", "inputPerM": 0.3, "outputPerM": 2.5 },
+    { "id": "google/gemini-3.1-flash-lite", "inputPerM": 0.5, "outputPerM": 3.0 },
     { "id": "anthropic/claude-haiku-4.5", "inputPerM": 1.0, "outputPerM": 5.0 },
     { "id": "anthropic/claude-sonnet-5", "inputPerM": 2.0, "outputPerM": 10.0 },
     { "id": "openai/o4-mini-high", "inputPerM": 1.1, "outputPerM": 4.4 },

@@ -1,0 +1,11 @@
+You are given a complete production description of the final infographic poster. Follow it exactly and literally.
+
+Read LAYER 1 first: learn the palette, the named color roles, the typography system, and the general styling rules for the main structural elements (page background, title card, card surfaces, title plates, content insets, icons, diagrams, and mini-item blocks).
+
+Then apply LAYER 2 for overall composition (format, reading order, rows, spacing, and layout geometry).
+
+Then render every card and content block according to the detailed card-by-card instructions in LAYER 3.
+
+Structural helper labels in this prompt — such as TITLE CARD, CARD, ROW, card caption, Card title, Main content, Formula, card inset, Card inset, Icon, Visual, Layout, and similar headings — are instructions for you only. They describe parts of a card or layout; they are not visible poster text. Do not render these labels, field names, section headings, or role names on the final image unless the exact same words are explicitly given as visible educational text inside a content block.
+
+On the poster, show only the actual educational content specified under those labels: titles, body text, formulas, examples, captions, and visuals described as viewer-facing copy.

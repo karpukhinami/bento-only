@@ -1,0 +1,10 @@
+node_modules/
+.output/
+dist/
+.env
+.env.*
+!.env.example
+.tanstack/
+*.log
+.DS_Store
+Thumbs.db

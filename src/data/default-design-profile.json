@@ -1,0 +1,107 @@
+[
+  {
+    "profileName": "Оранжевый",
+    "colors": {
+      "backgroundColor": "#FFFFFF",
+      "surfaceColor": "#FFFFFF",
+      "primaryColor": "#FFAA57",
+      "detailSoftColor": "#F8E0C9",
+      "detailDeepColor": "#FFD6AE",
+      "contrastSoftColor": "#D7D2FA",
+      "inkColor": "#0C1126",
+      "headerColor": "#293642",
+      "lightTextColor": "#FFFFFF",
+      "spotAccentColor": "#0C71C9",
+      "mutedheaderTextColor": "#818C96"
+    },
+    "typography": {
+      "styleId": "geometric_grotesque",
+      "specificityId": "character_only"
+    },
+    "notesForAI": "## General color rules\n\n- Use `backgroundColor` for the overall infographic background.\n\n- Use `headerColor` for the header or any main navigation/header area.\n\n- Use `lightTextColor` for the main title on a dark header.\n\n- Use `mutedheaderTextColor` for subtitles, meta labels, and secondary text inside the header.\n\n- Use `primaryColor` for the main semantic accent of the infographic.\n\n- Use `primaryColor` to highlight one key word in the main title or another highly important text element.\n\n- On `primaryColor`, use `inkColor` for text by default. If contrast is not sufficient, use `lightTextColor`.\n\n- Use `inkColor` for main educational text, labels, formulas, captions, and explanations.\n\n- Use `inkColor` for lines, arrows, outlines, icons, diagrams, and other technical graphic elements.\n\n- Use `detailSoftColor` and `detailDeepColor` as soft background fills for secondary content zones.\n\n- Use `contrastSoftColor` for a separate emphasized content zone: conclusion, consequence, quote, mnemonic, warning, or key takeaway.\n\n- Use `surfaceColor` for small inner surfaces: formulas, examples, notes, mini explanations, and compact inset blocks.\n\n- If the layout uses heading labels or section badges, use `headerColor` for their background and `lightTextColor` for their text.\n\n- Use `spotAccentColor` only for rare micro-accents: one word, a small icon, a marker, or a warning sign.\n\n- Limit `spotAccentColor` to no more than 2 uses per infographic.\n\n- Do not use pastel colors as text, icon, line, or outline colors.\n\n- Do not put HEX codes, Markdown, technical notes, or color explanations into visible infographic text.\n\n- Keep the color hierarchy clear: `inkColor` for normal content, `detailSoftColor` / `detailDeepColor` for supporting zones, `contrastSoftColor` for special emphasis, `primaryColor` for the main idea, and `spotAccentColor` for rare micro-accents."
+  },
+  {
+    "profileName": "Индиго",
+    "colors": {
+      "backgroundColor": "#FFFFFF",
+      "surfaceColor": "#FFFFFF",
+      "primaryColor": "#7262DE",
+      "detailSoftColor": "#D7D2FA",
+      "detailDeepColor": "#C3BCF4",
+      "contrastSoftColor": "#BDE8DC",
+      "inkColor": "#0C1126",
+      "headerColor": "#323852",
+      "lightTextColor": "#FFFFFF",
+      "spotAccentColor": "#068A6A",
+      "mutedheaderTextColor": "#737B9C"
+    },
+    "typography": {
+      "styleId": "geometric_grotesque",
+      "specificityId": "character_only"
+    },
+    "notesForAI": "## General color rules\n\n- Use `backgroundColor` for the overall infographic background.\n\n- Use `headerColor` for the header or any main navigation/header area.\n\n- Use `lightTextColor` for the main title on a dark header.\n\n- Use `mutedheaderTextColor` for subtitles, meta labels, and secondary text inside the header.\n\n- Use `primaryColor` for the main semantic accent of the infographic.\n\n- Use `primaryColor` to highlight one key word in the main title or another highly important text element.\n\n- On `primaryColor`, use `inkColor` for text by default. If contrast is not sufficient, use `lightTextColor`.\n\n- Use `inkColor` for main educational text, labels, formulas, captions, and explanations.\n\n- Use `inkColor` for lines, arrows, outlines, icons, diagrams, and other technical graphic elements.\n\n- Use `detailSoftColor` and `detailDeepColor` as soft background fills for secondary content zones.\n\n- Use `contrastSoftColor` for a separate emphasized content zone: conclusion, consequence, quote, mnemonic, warning, or key takeaway.\n\n- Use `surfaceColor` for small inner surfaces: formulas, examples, notes, mini explanations, and compact inset blocks.\n\n- If the layout uses heading labels or section badges, use `headerColor` for their background and `lightTextColor` for their text.\n\n- Use `spotAccentColor` only for rare micro-accents: one word, a small icon, a marker, or a warning sign.\n\n- Limit `spotAccentColor` to no more than 2 uses per infographic.\n\n- Do not use pastel colors as text, icon, line, or outline colors.\n\n- Do not put HEX codes, Markdown, technical notes, or color explanations into visible infographic text.\n\n- Keep the color hierarchy clear: `inkColor` for normal content, `detailSoftColor` / `detailDeepColor` for supporting zones, `contrastSoftColor` for special emphasis, `primaryColor` for the main idea, and `spotAccentColor` for rare micro-accents."
+  },
+  {
+    "profileName": "фиолетовая",
+    "colors": {
+      "backgroundColor": "#FFFFFF",
+      "surfaceColor": "#FFFFFF",
+      "primaryColor": "#BAADFF",
+      "detailSoftColor": "#E2E0F9",
+      "detailDeepColor": "#E2E0F9",
+      "contrastSoftColor": "#FFE4D0",
+      "inkColor": "#0C1126",
+      "headerColor": "#5642D5",
+      "lightTextColor": "#FFFFFF",
+      "spotAccentColor": "#F6761B",
+      "mutedheaderTextColor": "#FFFFFF"
+    },
+    "typography": {
+      "styleId": "geometric_grotesque",
+      "specificityId": "character_only"
+    },
+    "notesForAI": "## General color rules\n\n- Use `backgroundColor` for the overall infographic background.\n\n- Use `headerColor` for the header or any main navigation/header area.\n\n- Use `lightTextColor` for the main title on a dark header.\n\n- Use `mutedheaderTextColor` for subtitles, meta labels, and secondary text inside the header.\n\n- Use `primaryColor` for the main semantic accent of the infographic.\n\n- Use `primaryColor` to highlight one key word in the main title or another highly important text element.\n\n- On `primaryColor`, use `inkColor` for text by default. If contrast is not sufficient, use `lightTextColor`.\n\n- Use `inkColor` for main educational text, labels, formulas, captions, and explanations.\n\n- Use `inkColor` for lines, arrows, outlines, icons, diagrams, and other technical graphic elements.\n\n- Use `detailSoftColor` and `detailDeepColor` as soft background fills for secondary content zones.\n\n- Use `contrastSoftColor` for a separate emphasized content zone: conclusion, consequence, quote, mnemonic, warning, or key takeaway.\n\n- Use `surfaceColor` for small inner surfaces: formulas, examples, notes, mini explanations, and compact inset blocks.\n\n- If the layout uses heading labels or section badges, use `headerColor` for their background and `lightTextColor` for their text.\n\n- Use `spotAccentColor` only for rare micro-accents: one word, a small icon, a marker, or a warning sign.\n\n- Limit `spotAccentColor` to no more than 2 uses per infographic.\n\n- Do not use pastel colors as text, icon, line, or outline colors.\n\n- Do not put HEX codes, Markdown, technical notes, or color explanations into visible infographic text.\n\n- Keep the color hierarchy clear: `inkColor` for normal content, `detailSoftColor` / `detailDeepColor` for supporting zones, `contrastSoftColor` for special emphasis, `primaryColor` for the main idea, and `spotAccentColor` for rare micro-accents."
+  },
+  {
+    "profileName": "светлая с голубым",
+    "colors": {
+      "backgroundColor": "#FFFFFF",
+      "surfaceColor": "#FFFFFF",
+      "primaryColor": "#A99DFF",
+      "detailSoftColor": "#E9EDF9",
+      "detailDeepColor": "#E9EDF9",
+      "contrastSoftColor": "#A8D5FF",
+      "inkColor": "#0C1126",
+      "headerColor": "#0B0F19",
+      "lightTextColor": "#FFFFFF",
+      "spotAccentColor": "#1B59E0",
+      "mutedheaderTextColor": "#FFFFFF"
+    },
+    "typography": {
+      "styleId": "geometric_grotesque",
+      "specificityId": "character_only"
+    },
+    "notesForAI": "## General color rules\n\n- Use `backgroundColor` for the overall infographic background.\n\n- Use `headerColor` for the header or any main navigation/header area.\n\n- Use `lightTextColor` for the main title on a dark header.\n\n- Use `mutedheaderTextColor` for subtitles, meta labels, and secondary text inside the header.\n\n- Use `primaryColor` for the main semantic accent of the infographic.\n\n- Use `primaryColor` to highlight one key word in the main title or another highly important text element.\n\n- On `primaryColor`, use `inkColor` for text by default. If contrast is not sufficient, use `lightTextColor`.\n\n- Use `inkColor` for main educational text, labels, formulas, captions, and explanations.\n\n- Use `inkColor` for lines, arrows, outlines, icons, diagrams, and other technical graphic elements.\n\n- Use `detailSoftColor` and `detailDeepColor` as soft background fills for secondary content zones.\n\n- Use `contrastSoftColor` for a separate emphasized content zone: conclusion, consequence, quote, mnemonic, warning, or key takeaway.\n\n- Use `surfaceColor` for small inner surfaces: formulas, examples, notes, mini explanations, and compact inset blocks.\n\n- If the layout uses heading labels or section badges, use `headerColor` for their background and `lightTextColor` for their text.\n\n- Use `spotAccentColor` only for rare micro-accents: one word, a small icon, a marker, or a warning sign.\n\n- Limit `spotAccentColor` to no more than 2 uses per infographic.\n\n- Do not use pastel colors as text, icon, line, or outline colors.\n\n- Do not put HEX codes, Markdown, technical notes, or color explanations into visible infographic text.\n\n- Keep the color hierarchy clear: `inkColor` for normal content, `detailSoftColor` / `detailDeepColor` for supporting zones, `contrastSoftColor` for special emphasis, `primaryColor` for the main idea, and `spotAccentColor` for rare micro-accents."
+  },
+  {
+    "profileName": "светлая с оранжевым",
+    "colors": {
+      "backgroundColor": "#FFFFFF",
+      "surfaceColor": "#FFFFFF",
+      "primaryColor": "#A99DFF",
+      "detailSoftColor": "#E9EDF9",
+      "detailDeepColor": "#E9EDF9",
+      "contrastSoftColor": "#FFBC81",
+      "inkColor": "#0C1126",
+      "headerColor": "#0B0F19",
+      "lightTextColor": "#FFFFFF",
+      "spotAccentColor": "#1B59E0",
+      "mutedheaderTextColor": "#FFFFFF"
+    },
+    "typography": {
+      "styleId": "geometric_grotesque",
+      "specificityId": "character_only"
+    },
+    "notesForAI": "## General color rules\n\n- Use `backgroundColor` for the overall infographic background.\n\n- Use `headerColor` for the header or any main navigation/header area.\n\n- Use `lightTextColor` for the main title on a dark header.\n\n- Use `mutedheaderTextColor` for subtitles, meta labels, and secondary text inside the header.\n\n- Use `primaryColor` for the main semantic accent of the infographic.\n\n- Use `primaryColor` to highlight one key word in the main title or another highly important text element.\n\n- On `primaryColor`, use `inkColor` for text by default. If contrast is not sufficient, use `lightTextColor`.\n\n- Use `inkColor` for main educational text, labels, formulas, captions, and explanations.\n\n- Use `inkColor` for lines, arrows, outlines, icons, diagrams, and other technical graphic elements.\n\n- Use `detailSoftColor` and `detailDeepColor` as soft background fills for secondary content zones.\n\n- Use `contrastSoftColor` for a separate emphasized content zone: conclusion, consequence, quote, mnemonic, warning, or key takeaway.\n\n- Use `surfaceColor` for small inner surfaces: formulas, examples, notes, mini explanations, and compact inset blocks.\n\n- If the layout uses heading labels or section badges, use `headerColor` for their background and `lightTextColor` for their text.\n\n- Use `spotAccentColor` only for rare micro-accents: one word, a small icon, a marker, or a warning sign.\n\n- Limit `spotAccentColor` to no more than 2 uses per infographic.\n\n- Do not use pastel colors as text, icon, line, or outline colors.\n\n- Do not put HEX codes, Markdown, technical notes, or color explanations into visible infographic text.\n\n- Keep the color hierarchy clear: `inkColor` for normal content, `detailSoftColor` / `detailDeepColor` for supporting zones, `contrastSoftColor` for special emphasis, `primaryColor` for the main idea, and `spotAccentColor` for rare micro-accents."
+  }
+]

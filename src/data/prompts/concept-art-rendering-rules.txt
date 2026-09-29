@@ -1,0 +1,176 @@
+RENDERING STRICTNESS RULES
+
+The design brief assigns one of three rendering modes to each visual interpretation:
+
+- ILLUSTRATIVE
+- HYBRID
+- STRICT
+
+Follow the assigned rendering mode exactly.
+
+The rendering mode controls HOW the described content is visually executed. It does not change the objects, text, symbols, relationships, quantities, or composition specified in the design brief.
+
+GLOBAL RULE — SEMANTIC PRECISION OVERRIDES STYLIZATION
+
+Regardless of the selected rendering mode, any element whose exact shape, size, number, position, direction, proportion, alignment, or spatial relationship carries educational meaning must be rendered accurately and without decorative distortion.
+
+Formulas, mathematical symbols, labels, arrows, measurement marks, geometric constructions, diagrams, proportional areas, quantities, and other semantic notation must remain clearly readable and unambiguous.
+
+Artistic treatment may enrich the visual appearance, but must never alter the conceptual structure described in the design brief.
+
+
+ILLUSTRATIVE
+
+Use the ILLUSTRATIVE mode when the concept is primarily expressed through recognizable objects, characters, environments, scenes, visual analogies, or other pictorial imagery.
+
+Render the image as a handcrafted digital editorial illustration with a contemporary mid-century-inspired character.
+
+Use simplified, expressive forms rather than photorealistic rendering. Shapes may be slightly organic and imperfect. Avoid unnecessary anatomical, material, or environmental detail unless it contributes to the concept.
+
+Use a tactile mixed-media appearance:
+- textured gouache-like coverage;
+- soft pastel grain;
+- subtle colored-pencil softness;
+- delicate paper texture;
+- fine speckling and stippling;
+- gentle pigment variation;
+- restrained dry-brush texture;
+- matte print-like finish;
+- subtle screen-print or risograph character.
+
+Create depth mainly through overlapping shapes, scale differences, layered color planes, restrained tonal variation, and soft diffuse shadows rather than realistic 3D modelling.
+
+Outlines should be minimal. Prefer shape separation, tonal contrast, and overlap over heavy contour drawing.
+
+The image may feel lively, warm, expressive, playful, or gently humorous when appropriate to the concept, but it must remain an educational editorial illustration rather than a decorative storybook scene.
+
+Maintain a clean composition and sufficient negative space. Decorative details must remain subordinate to the meaningful objects and actions.
+
+If formulas, arrows, labels, geometric elements, or other precise semantic notation appear inside an ILLUSTRATIVE image, render those elements more cleanly and precisely than the surrounding pictorial objects. Do not apply painterly distortion to them.
+
+
+HYBRID
+
+Use the HYBRID mode when pictorial illustration and precise educational notation are both important parts of the same image.
+
+Treat the image as two visually integrated layers:
+
+1. a pictorial layer containing objects, characters, environments, organisms, landscapes, or other illustrative content;
+2. a semantic layer containing formulas, labels, arrows, markers, highlighting, boundaries, diagrams, geometric relations, symbols, or other explanatory notation.
+
+Render the pictorial layer with the handcrafted editorial style:
+- simplified forms;
+- textured gouache and pastel character;
+- fine grain and paper texture;
+- subtle pigment variation;
+- matte surfaces;
+- organic edges;
+- restrained depth through overlap and soft shadows.
+
+Render the semantic layer with substantially greater precision:
+- clean and stable geometry;
+- clearly defined arrows and connectors;
+- precise placement;
+- restrained or absent surface texture;
+- crisp symbols and formulas;
+- clear visual hierarchy;
+- unambiguous correspondence between labels and the elements they describe.
+
+Do not make the semantic layer look like a separate digital interface pasted over an illustration. Both layers must belong to one coherent visual system.
+
+Use color, line weight, spacing, and placement to integrate the precise information with the illustrative scene while preserving its clarity.
+
+When an object itself carries both pictorial and semantic meaning, combine both treatments. For example, a flower may have tactile editorial texture, while the lines indicating its parts remain clean and precise; a landscape may be painterly, while arrows showing a natural cycle remain clearly controlled.
+
+The more strongly an element encodes educational information, the closer its treatment should move toward STRICT rendering.
+
+
+STRICT
+
+Use the STRICT mode when the educational meaning is carried primarily by exact geometry, symbols, formulas, spatial relations, quantities, proportions, areas, positions, directions, or other formal visual structures.
+
+Prioritize informational precision over painterly expression.
+
+Use clean, simplified, controlled forms with accurate geometry and stable alignment.
+
+Lines, areas, arrows, points, containers, axes, geometric figures, proportional shapes, symbols, formulas, and labels must be rendered with maximum clarity.
+
+When size, count, distance, proportion, or position carries meaning:
+- preserve the specified quantities exactly;
+- preserve relative dimensions and proportions;
+- preserve intended alignment;
+- preserve directional relationships;
+- do not introduce perspective distortion;
+- do not vary repeated elements arbitrarily;
+- do not deform geometric shapes for visual expressiveness.
+
+Use flat or nearly flat color areas and restrained tonal variation.
+
+Texture must be minimal on semantic elements. A subtle paper or print texture may remain in the overall image to maintain consistency with the surrounding design system, but it must never obscure edges, symbols, small differences, or quantitative relationships.
+
+Avoid painterly edges on shapes whose boundaries carry meaning.
+
+Avoid unnecessary depth, dramatic lighting, decorative shadows, atmospheric effects, or ornamental details.
+
+If a real-world object is included only as supporting context, it may receive a small amount of editorial texture, but the main formal representation must remain visually dominant.
+
+STRICT does not mean sterile or unattractive. Preserve the overall contemporary editorial character through balanced spacing, confident shapes, restrained texture, harmonious use of the supplied palette, and strong visual composition — while keeping the semantic construction exact.
+
+
+STYLE CONSISTENCY ACROSS ALL MODES
+
+All three modes belong to the same overall educational editorial design system.
+
+Use the palette and typography supplied separately for the current infographic as the main visual reference.
+
+Do not force semantically meaningful natural or conventional colors to match the palette when doing so would reduce clarity or recognizability. Integrate such colors harmoniously into the surrounding palette instead.
+
+Do not replace the assigned visual language with genre-specific defaults prompted by the subject matter.
+
+Avoid:
+- photorealism;
+- glossy CGI or generic 3D rendering;
+- anime aesthetics;
+- textureless generic cartoon vector art;
+- cyberpunk or neon sci-fi styling;
+- sterile software-interface aesthetics unless an interface itself is explicitly required by the design brief;
+- decorative effects that compete with educational meaning.
+
+Subject matter determines WHAT is depicted.
+The assigned rendering mode determines HOW strictly or illustratively it is depicted.
+The design brief determines the exact content and composition.
+
+
+LATEX AND MATHEMATICAL NOTATION
+
+Treat any mathematical expression enclosed in `$...$` or `$$...$$` as LaTeX source code describing a mathematical formula.
+
+Render the formula as properly typeset mathematical notation. Do not reproduce the dollar-sign delimiters as visible characters.
+
+Do not display LaTeX command syntax such as backslashes, command names, or structural braces. For example, render `$\frac{a}{b}$` as a fraction, not as the visible text `\frac{a}{b}`.
+
+If backslashes are doubled because the prompt is encoded as JSON, interpret them as escaped LaTeX commands and render the intended formula.
+
+Preserve the mathematical content exactly. Do not simplify, solve, translate, expand, reorder, or rewrite the formula. Preserve all variables, numbers, operators, inequalities, superscripts, subscripts, fractions, roots, brackets, indices, and other mathematical symbols.
+
+Mathematical notation is always a semantically precise element. Regardless of the assigned rendering mode, do not distort the structure, proportions, alignment, or readability of the formula for artistic effect.
+
+At the same time, integrate the formula naturally into the surrounding visual interpretation. Its placement, scale, color, visual weight, and surrounding space should belong to the composition rather than appearing as an unrelated text layer pasted over the image.
+
+In ILLUSTRATIVE mode, formulas may appear inside or beside a pictorial scene, object, analogy, or character-based composition. Keep the formula clean and accurately typeset while allowing its surrounding container, background, or supporting visual elements to follow the illustrative editorial style.
+
+In HYBRID mode, treat formulas as part of the precise semantic layer. Visually coordinate them with arrows, labels, markers, and other explanatory elements while keeping them clearly integrated with the pictorial layer.
+
+In STRICT mode, formulas may become one of the principal visual elements. Give them clear hierarchy, stable alignment, sufficient space, and precise relationships to nearby diagrams, symbols, geometric objects, or quantitative models.
+
+Render formulas enclosed in `$...$` as inline mathematics when they occur inside a sentence, label, or short text line.
+
+Render formulas enclosed in `$$...$$` as display mathematics when they are intended as a separate formula, central mathematical statement, or visually distinct mathematical element.
+
+If a formula is part of a larger visual object or composition, preserve the placement and relationship specified in the design brief. Do not automatically center or isolate it unless the brief indicates that the formula should function as a standalone element.
+
+If a field contains only a formula and no more specific placement is given, treat the formula as the main visible content of that element and position it according to the surrounding composition and assigned rendering mode.
+
+When color is used to establish a meaningful correspondence between parts of a formula and other objects, areas, arrows, or symbols in the image, preserve that correspondence consistently. Do not introduce additional color coding that changes or implies new mathematical relationships.
+
+Dollar signs, escaped backslashes, and LaTeX structural braces are technical markup and must never appear on the final image unless they are explicitly part of the mathematical content.

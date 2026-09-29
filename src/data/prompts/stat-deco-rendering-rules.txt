@@ -1,0 +1,112 @@
+GLOBAL RULE — SEMANTIC PRECISION OVERRIDES STYLIZATION
+
+Any element whose exact shape, size, number, position, direction, proportion, alignment, or spatial relationship carries educational or quantitative meaning must be rendered accurately and without decorative distortion.
+
+Labels, numerical values, proportional areas, quantities, chart geometry, data points, axes when present, formulas, mathematical symbols, and other semantic notation must remain clearly readable and unambiguous.
+
+Artistic treatment may enrich and transform the visual appearance, but must never alter the data, quantitative relationships, or conceptual structure described in the design brief.
+
+
+ATTACHED REFERENCE IMAGE
+
+When an image is attached, treat it as the primary reference for the chart's geometry, layout, proportions, and color harmony. Before inventing your own composition, study the attached image first: mirror its chart structure, spatial arrangement, and the overall color mood, then adapt them to the design brief and palette. The attached image is a starting point, not a strict template — refine and stylize it, but do not discard its geometric and chromatic decisions without reason.
+
+
+VISUAL STYLE
+
+Use a handcrafted digital educational editorial illustration style with a contemporary mid-century-inspired character.
+
+Use simplified, expressive forms rather than photorealistic rendering. Shapes may be slightly organic and imperfect. Avoid unnecessary anatomical, material, or environmental detail unless it contributes to the concept.
+
+Use a tactile mixed-media appearance:
+
+- textured gouache-like coverage;
+
+- soft pastel grain;
+
+- subtle colored-pencil softness;
+
+- delicate paper texture;
+
+- fine speckling and stippling;
+
+- gentle pigment variation;
+
+- restrained dry-brush texture;
+
+- matte print-like finish;
+
+- subtle screen-print or risograph character.
+
+Create depth mainly through overlapping shapes, scale differences, layered color planes, restrained tonal variation, and soft diffuse shadows rather than realistic 3D modelling.
+
+Outlines should be minimal. Prefer shape separation, tonal contrast, and overlap over heavy contour drawing.
+
+The image may feel lively, warm, expressive, playful, or gently humorous when appropriate to the subject, but it must remain an educational editorial illustration rather than a decorative storybook scene.
+
+Maintain a clean composition and sufficient negative space. Decorative details must remain subordinate to the chart, its quantitative meaning, and the meaningful illustrative objects.
+
+Elements that directly encode data must be rendered more cleanly and precisely than surrounding pictorial objects. Do not apply painterly distortion to boundaries, positions, proportions, values, or other geometric properties that carry quantitative meaning.
+
+The chart and the pictorial illustration must belong to one coherent visual system. Do not make the chart look like a sterile technical layer with unrelated decorative images pasted over it. Use color, texture, shape treatment, overlap, line weight, and placement to visually integrate the quantitative and illustrative parts while preserving data clarity.
+
+Use the palette and typography supplied separately for the current infographic as the main visual reference.
+
+Do not force semantically meaningful natural or conventional colors to match the palette when doing so would reduce clarity or recognizability. Integrate such colors harmoniously into the surrounding palette instead.
+
+Do not replace the assigned visual language with genre-specific defaults prompted by the subject matter.
+
+Avoid:
+
+- photorealism;
+
+- glossy CGI or generic 3D rendering;
+
+- anime aesthetics;
+
+- textureless generic cartoon vector art;
+
+- cyberpunk or neon sci-fi styling;
+
+- sterile software-interface aesthetics unless an interface itself is explicitly required by the design brief;
+
+- decorative effects that compete with educational or quantitative meaning.
+
+Subject matter determines WHAT is depicted.
+
+The design brief determines the exact content and artistic transformation.
+
+The reference chart determines the quantitative structure that must remain recognizable and accurate.
+
+
+LATEX AND MATHEMATICAL NOTATION
+
+Treat any mathematical expression enclosed in `$...$` or `$$...$$` as LaTeX source code describing a mathematical formula.
+
+Render the formula as properly typeset mathematical notation. Do not reproduce the dollar-sign delimiters as visible characters.
+
+Do not display LaTeX command syntax such as backslashes, command names, or structural braces. For example, render `$\frac{a}{b}$` as a fraction, not as the visible text `\frac{a}{b}`.
+
+If backslashes are doubled because the prompt is encoded as JSON, interpret them as escaped LaTeX commands and render the intended formula.
+
+Preserve the mathematical content exactly. Do not simplify, solve, translate, expand, reorder, or rewrite the formula. Preserve all variables, numbers, operators, inequalities, superscripts, subscripts, fractions, roots, brackets, indices, and other mathematical symbols.
+
+The mathematical structure and meaning encoded by the LaTeX must always remain correct and unambiguous. Fractions, superscripts, subscripts, roots, brackets, operators, alignments, and other structural relationships must be visually represented in the correct mathematical form.
+
+At the same time, the formula should belong naturally to the visual style of the surrounding image rather than appearing as a sterile typeset element pasted on top of an illustration.
+
+Its color, line character, visual weight, surrounding shape, background, container, and overall presentation may follow the same playful, handcrafted, editorial, or cartoon-like visual language as the rest of the image, as long as this stylization does not alter or obscure the mathematical meaning.
+
+A formula may therefore feel illustrated, friendly, expressive, or visually integrated with nearby objects. Decorative treatment is allowed around and within the visual presentation of the formula, but the actual mathematical symbols and their structural relationships must remain clearly recognizable and correct.
+
+Render formulas enclosed in `$...$` as inline mathematics when they occur inside a sentence, label, or short text line.
+
+Render formulas enclosed in `$$...$$` as display mathematics when they are intended as a separate formula, central mathematical statement, or visually distinct mathematical element.
+
+If a formula is part of a larger visual object or composition, preserve the placement and relationship specified in the design brief. Do not automatically center or isolate it unless the brief indicates that the formula should function as a standalone element.
+
+If a field contains only a formula and no more specific placement is given, treat the formula as the main visible content of that element and position it according to the surrounding composition.
+
+When color is used to establish a meaningful correspondence between parts of a formula and other objects, areas, chart elements, arrows, or symbols in the image, preserve that correspondence consistently. Do not introduce additional color coding that changes or implies new mathematical relationships.
+
+Dollar signs, escaped backslashes, and LaTeX structural braces are technical markup and must never appear on the final image unless they are explicitly part of the mathematical content.

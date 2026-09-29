@@ -1,0 +1,61 @@
+EXECUTION
+
+Render the complete infographic poster strictly following the production prompt above.
+
+Use only the visible educational text explicitly specified in the prompt.
+
+Do not add, rewrite, shorten, expand, translate, paraphrase or invent any educational content.
+
+Do not place a period at the end of the main infographic title, the infographic summary, or any individual card title under any circumstances.
+
+Preserve all formulas, examples, labels, symbols, variables, numbers, punctuation, paragraph breaks and list structure exactly as specified.
+
+If a formula is written using LaTeX commands but is not enclosed in dollar signs, still render it as a proper readable mathematical formula. Do not leave raw LaTeX commands, backslashes, braces or other technical syntax visible unless they are explicitly intended as visible educational text.
+
+Render formulas using a dedicated mathematical formula typeface, visually similar to LaTeX / Computer Modern Math: elegant serif math glyphs, clear italic variables, readable operators, fractions, superscripts, subscripts and symbols.
+
+Do not render any internal or technical labels.
+
+DO NOT RENDER THE SAME CARD TWICE!
+
+Do not render field names such as ContentSummary, topic, subject, grade, summary, entities, sectionId, entityType, priority, title, content, formula, example, icon, visual or backgroundRole.
+
+Do not render layout labels such as LAYER 1, LAYER 2, LAYER 3, BRAND DNA, COMPOSITION DECISIONS, CONTENT, HEADER, MAIN CARD, DOMINANT CARD, DETAIL ROW, CARD, VISUAL CARD, WARNING CARD, FORMULA CARD, EXAMPLE CARD, CONCLUSION CARD or ACCENT CARD, unless the exact words are explicitly part of the visible educational text.
+
+Do not render row names, card names, block names, role names, placeholder labels, prompt notes or design instructions.
+
+Do not render color names, palette names, color roles, hex codes or color instructions.
+
+Do not render typography notes, font descriptions, style labels, design-system terms or production annotations.
+
+Do not render brackets, quotation marks, arrows, numbering or captions that are only used as instructions in the prompt and are not part of the visible educational content.
+
+No pseudo-text.
+
+No lorem ipsum.
+
+No fake UI labels.
+
+No random captions.
+
+No watermarks.
+
+No signatures.
+
+No spelling errors.
+
+No broken Cyrillic text.
+
+No incorrect mathematical notation.
+
+No extra decorative text in the background.
+
+Keep the image flat, clean, front-facing and readable.
+
+Follow the specified composition, card order, colors, typography, spacing and visual hierarchy.
+
+Do not rearrange rows or cards.
+
+Do not omit any specified content block.
+
+Do not add extra cards, icons, diagrams, arrows, axes, labels or decorative elements unless they are explicitly specified in the prompt.

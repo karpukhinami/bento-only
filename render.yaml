@@ -1,0 +1,32 @@
+# Render Blueprint: https://render.com/docs/infrastructure-as-code
+services:
+  - type: web
+    name: bento-only
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: node .output/server/index.mjs
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # Lovable AI Gateway (модели без OpenRouter)
+      - key: LOVABLE_API_KEY
+        sync: false
+      # OpenRouter (модели openrouter/* в UI)
+      - key: OPENROUTER_API_KEY
+        sync: false
+      # Google Drive + Sheets (архив генераций и фидбек)
+      - key: GOOGLE_OAUTH_CLIENT_ID
+        sync: false
+      - key: GOOGLE_OAUTH_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_OAUTH_REFRESH_TOKEN
+        sync: false
+      - key: GOOGLE_DRIVE_FOLDER_ID
+        sync: false
+      - key: GOOGLE_SHEETS_ID
+        sync: false
+      # Необязательно: имя листа; если пусто — первый лист таблицы
+      - key: GOOGLE_SHEET_NAME
+        sync: false

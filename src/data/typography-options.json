@@ -1,0 +1,66 @@
+{
+  "typography_styles": [
+    {
+      "id": "geometric_grotesque",
+      "label": "Геометрический гротеск",
+      "prompt": "Font style: modern geometric grotesque sans-serif, similar to Inter, Manrope, or Onest. Clean, neutral, highly legible, precise, suitable for premium minimal educational infographics, bento-grid layouts, structured posters, and interface-like compositions."
+    },
+    {
+      "id": "neutral_ui_sans",
+      "label": "Интерфейсный гротеск",
+      "prompt": "Font style: neutral UI sans-serif. Clean, functional, calm, highly readable, similar to modern system interface typography. Prioritize clarity, order, and comfortable reading over expressive character."
+    },
+    {
+      "id": "soft_humanist_sans",
+      "label": "Гуманистический гротеск",
+      "prompt": "Font style: soft humanist sans-serif. Friendly, warm, readable, with gentle proportions and a less mechanical feeling. Suitable for educational, psychological, humanitarian, family-oriented, and approachable visual content."
+    },
+    {
+      "id": "strict_neo_grotesque",
+      "label": "Строгий неогротеск",
+      "prompt": "Font style: strict neo-grotesque sans-serif. Rational, restrained, corporate, structured, and objective. Suitable for business, economics, law, management, analytics, and serious institutional topics."
+    },
+    {
+      "id": "editorial_serif",
+      "label": "Редакционная антиква",
+      "prompt": "Font style: elegant editorial serif. Refined, intellectual, magazine-like, literary, and culturally rich. Suitable for history, literature, art, philosophy, essays, humanities, and premium editorial layouts."
+    },
+    {
+      "id": "soft_modern_serif",
+      "label": "Мягкая антиква",
+      "prompt": "Font style: modern soft serif. Elegant but accessible, calm, refined, and slightly literary. Suitable for aesthetic educational posters, culture, philosophy, art, psychology, and reflective themes."
+    },
+    {
+      "id": "display_headline",
+      "label": "Акцидентный заголовочный",
+      "prompt": "Typography: expressive display font for the main title only, paired with a clean sans-serif for all body text. Create strong contrast between the headline and informational text, but keep the overall layout readable, disciplined, and not decorative."
+    },
+    {
+      "id": "tech_monospace",
+      "label": "Техно / моноширинный",
+      "prompt": "Font style: modern monospaced or tech-inspired sans-serif. Precise, digital, structured, analytical, and readable. Suitable for topics about code, artificial intelligence, data, cybersecurity, systems, technology, and engineering."
+    },
+    {
+      "id": "readability_first",
+      "label": "Максимальная читаемость",
+      "prompt": "Typography: simple clean sans-serif with maximum readability. No decorative fonts, no complex lettering, no experimental typography. Prioritize correct, clear, and stable rendering of Russian text above stylistic expression."
+    }
+  ],
+  "font_specificity_modes": [
+    {
+      "id": "character_only",
+      "label": "Только характер",
+      "prompt": "Do not require a specific font family. Use the selected typographic character and choose a visually appropriate readable font in that style."
+    },
+    {
+      "id": "preferred_with_fallback",
+      "label": "Предпочтительный шрифт",
+      "prompt": "Prefer the specified font family. If it is unavailable, use a visually similar fallback font with the same typographic character."
+    },
+    {
+      "id": "strict_font",
+      "label": "Строго заданный шрифт",
+      "prompt": "Use the specified font family for all text. Do not substitute it unless rendering the text becomes impossible."
+    }
+  ]
+}

@@ -17,9 +17,9 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Loader2, RotateCcw, Sparkles, ImageIcon, Download, Info } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Loader2, RotateCcw, Sparkles, ImageIcon, Download } from "lucide-react";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { ProfileSelect } from "@/components/design-profile/ProfileSelect";
 import { useProjectStore, useActiveContent } from "@/store/useProjectStore";
 import { useSettingsStore } from "@/store/useSettingsStore";
 import { callImageLLM, callTextLLM } from "@/lib/llm-client";
@@ -172,6 +172,7 @@ function SimpleHome() {
   const canGenerate = subjectOk && gradeOk;
   const showResults = Boolean(activeContent) || loading !== null;
   const isBusy = loading !== null;
+  const activeProfileName = selectedProfileName ?? DEFAULT_HOME_DESIGN_PROFILE;
 
   useEffect(() => {
     if (!imageFullscreen) return;
@@ -247,8 +248,8 @@ function SimpleHome() {
       .replaceAll("{{TOPIC}}", source.topic || "")
       .replaceAll("{{SUBJECT}}", source.subject || "")
       .replaceAll("{{GRADE}}", source.grade || "")
-      .replaceAll("{{EDUCATIONAL_ILLUSTRATIONS}}", source.educationalIllustrations ? "вкл" : "выкл")
-      .replaceAll("{{NARRATIVE_ILLUSTRATIONS}}", source.narrativeIllustrations ? "вкл" : "выкл");
+      .replaceAll("{{EDUCATIONAL_ILLUSTRATIONS}}", "вкл")
+      .replaceAll("{{NARRATIVE_ILLUSTRATIONS}}", "вкл");
 
     const imgs = attachedImages.length ? attachedImages : undefined;
     const analysis = await callTextLLMForJson({
@@ -315,8 +316,8 @@ function SimpleHome() {
     const dataUrl = await callImageLLM({ model: project.models.image, prompt: finalPrompt });
     archiveSimple();
     const generationSnapshot = {
-      educationalIllustrations: project.source.educationalIllustrations,
-      narrativeIllustrations: project.source.narrativeIllustrations,
+      educationalIllustrations: true,
+      narrativeIllustrations: true,
     };
     setSimpleCurrent({
       dataUrl,
@@ -392,13 +393,17 @@ function SimpleHome() {
       });
     }
     try {
+      if (!useProjectStore.getState().selectedProfileName) {
+        setSelectedProfileName(DEFAULT_HOME_DESIGN_PROFILE);
+      }
+      const useProfile = useProjectStore.getState().selectedProfileName ?? DEFAULT_HOME_DESIGN_PROFILE;
+
       let step0Appendix = "";
       if (source.text.trim()) {
         setLoading("lessonPlan");
         step0Appendix = await runLessonPlanStep(source.text);
       }
       setLoading("analyze");
-      const profileBeforeAnalyze = useProjectStore.getState().selectedProfileName;
       const summary = await runAnalyze(step0Appendix);
       if (!summary) return;
       if (trackHome) {
@@ -408,8 +413,6 @@ function SimpleHome() {
           generation_mode: hasSource ? "with_materials" : "topic_only",
         });
       }
-      const useProfile = profileBeforeAnalyze ?? DEFAULT_HOME_DESIGN_PROFILE;
-      if (!profileBeforeAnalyze) setSelectedProfileName(DEFAULT_HOME_DESIGN_PROFILE);
       setLoading("image");
       const imageOk = await runImage({ useProfileName: useProfile, genTrigger: "initial" });
       if (!imageOk) return;
@@ -518,6 +521,17 @@ function SimpleHome() {
                 placeholder="Впишите название темы"
               />
             </div>
+            <div className="col-span-12">
+              <Label className="text-xs">Палитра</Label>
+              <ProfileSelect
+                value={activeProfileName}
+                onChange={(name) => {
+                  touchFormInput("palette");
+                  setSelectedProfileName(name);
+                }}
+                allowCreate={false}
+              />
+            </div>
           </div>
 
       <div>
@@ -532,47 +546,6 @@ function SimpleHome() {
           placeholder="На чём сделать акцент, что пропустить, особенности аудитории…"
         />
       </div>
-
-      <TooltipProvider delayDuration={150}>
-        <div className="flex flex-wrap items-center gap-6">
-          <div className="flex items-center gap-2">
-            <Switch
-              id="sw-edu"
-              checked={source.educationalIllustrations}
-              onCheckedChange={(v) => {
-                touchFormInput("educational_illustrations");
-                setSource({ educationalIllustrations: v });
-              }}
-            />
-            <Label htmlFor="sw-edu" className="text-sm font-normal cursor-pointer">
-              Учебные иллюстрации
-            </Label>
-            {source.educationalIllustrations && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="size-3.5 text-muted-foreground cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs text-xs">
-                  Иллюстрации по предмету — только если необходимы.
-                </TooltipContent>
-              </Tooltip>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            <Switch
-              id="sw-narr"
-              checked={source.narrativeIllustrations}
-              onCheckedChange={(v) => {
-                touchFormInput("narrative_illustrations");
-                setSource({ narrativeIllustrations: v });
-              }}
-            />
-            <Label htmlFor="sw-narr" className="text-sm font-normal cursor-pointer">
-              Сюжетные иллюстрации
-            </Label>
-          </div>
-        </div>
-      </TooltipProvider>
 
       <div className="space-y-2">
         <Label className="text-xs">План урока</Label>
@@ -621,20 +594,20 @@ function SimpleHome() {
                   {loading === "lessonPlan" ? (
                     <div className="flex flex-col items-center gap-2 py-8 text-sm text-muted-foreground">
                       <Loader2 className="size-8 animate-spin" />
-                      <div>Шаг 0 — обработка плана урока</div>
+                      <div>Шаг 1 — обработка плана урока</div>
                     </div>
                   ) : loading === "analyze" ? (
                     <div className="flex flex-col items-center gap-2 py-8 text-sm text-muted-foreground">
                       <Loader2 className="size-8 animate-spin" />
-                      <div>Шаг 1 из 4 — подбираем контент…</div>
+                      <div>Шаг 2 из 4 — подбираем контент…</div>
                     </div>
                   ) : loading === "image" ? (
                     <div className="flex flex-col items-center gap-2 py-8 text-sm text-muted-foreground">
                       <Loader2 className="size-8 animate-spin" />
                       <div>
                         {imageStage === "brief"
-                          ? "Шаг 2 из 4 — придумываем дизайн…"
-                          : "Шаг 3 из 4 — генерируем инфографику…"}
+                          ? "Шаг 3 из 4 — придумываем дизайн…"
+                          : "Шаг 4 из 4 — генерируем инфографику…"}
                       </div>
                     </div>
                   ) : simpleCurrent ? (
@@ -678,12 +651,7 @@ function SimpleHome() {
                   <div className="shrink-0">
                     <SimpleImageRating
                       imageId={simpleCurrent.id}
-                      showIllustrationsRow={
-                        Boolean(
-                          simpleCurrent.generationSnapshot?.educationalIllustrations ||
-                            simpleCurrent.generationSnapshot?.narrativeIllustrations,
-                        )
-                      }
+                      showIllustrationsRow
                       onRate={
                         trackHome
                           ? (rating) =>
